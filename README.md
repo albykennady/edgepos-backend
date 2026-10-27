@@ -36,3 +36,48 @@ It does not process real card payments or store real payment card data.
 A production EMV integration would require compatible certified
 hardware, a supported payment provider and the applicable security
 and certification requirements.
+
+
+## Running Locally
+
+### Prerequisites
+
+- Go installed
+- Git
+
+### Start the API
+
+From the project root, run:
+
+```bash
+go run ./cmd/api
+```
+
+The server listens on port 8080.
+
+### Health Endpoint
+
+Request:
+
+```http
+GET http://localhost:8080/health
+```
+
+Expected response:
+
+- Status: `200 OK`
+- Content-Type: `application/json`
+- Body: `{"status":"ok"}`
+
+### Run Tests
+
+```bash
+go test ./...
+```
+
+### Current Implementation
+
+- [x] Go HTTP server
+- [x] chi router
+- [x] Health endpoint
+- [x] Automated health endpoint test
