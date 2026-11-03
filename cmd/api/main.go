@@ -5,16 +5,18 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/albykennady/edgepos-backend/internal/config"
 	"github.com/albykennady/edgepos-backend/internal/httpapi"
 )
 
-const port = 8080
-
 func main() {
+	cfg := config.Load()
+	port := ":" + cfg.Port
+
 	handler := httpapi.NewRouter()
 
 	// TODO 1: Log that EdgePOS is starting on port 8080.
-	address := fmt.Sprintf(":%d", port)
+	address := fmt.Sprintf("%s", port)
 	log.Println("Starting application on port", address)
 
 	// TODO 2: Start the HTTP server on port 8080 using handler.
