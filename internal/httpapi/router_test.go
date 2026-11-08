@@ -31,3 +31,29 @@ func TestHealthEndpoint(t *testing.T) {
 		t.Errorf("expected body %q, got %q", `{"status":"ok"}`, got)
 	}
 }
+
+func TestReadyEndpoint(t *testing.T) {
+	router := NewRouter()
+
+	req := httptest.NewRequest(http.MethodGet, "/ready", nil)
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	// TODO 1: Assert that the status code is 200 OK.
+	if rec.Code != http.StatusOK {
+		t.Errorf("expected status %d, got %d", http.StatusOK, rec.Code)
+
+	}
+
+	// TODO 2: Assert that Content-Type is application/json.
+	if got := rec.Header().Get("Content-Type"); got != "application/json" {
+		t.Errorf("expected Content-Type %q, got %q", "application/json", got)
+
+	}
+
+	// TODO 3: Assert that the response body is {"status":"ready"}.
+	if got := rec.Body.String(); got != `{"status":"ready"}` {
+		t.Errorf("expected body %q, got %q", `{"status":"ready"}`, got)
+	}
+}
