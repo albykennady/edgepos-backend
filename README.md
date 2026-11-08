@@ -1,83 +1,193 @@
-# EdgePOS Backend
+# EdgePOS
 
-EdgePOS is a learning project that simulates a modern retail
-point-of-sale system using Go and PostgreSQL.
+A learning-focused Point of Sale (POS) backend project built with Go, with the goal of understanding how modern retail POS systems are designed and developed.
 
-## Project Goals
+The project follows a practical software engineering workflow, covering API development, database integration, transaction management, payment simulation, testing, and containerization.
 
-- Build a REST API using Go.
-- Persist products, carts and transactions in PostgreSQL.
-- Implement store, terminal and cashier context.
-- Model cart states and reliable checkout processing.
-- Build an operator interface using React and TypeScript.
-- Simulate cash and card payments.
-- Study EMV payment architecture and terminal integration.
-- Practice testing, Git workflows, CI/CD and containerization.
+## Tech Stack
 
-## Planned Technology Stack
+### Backend
+- **Language:** Go
+- **HTTP Router:** Chi
+- **Logging:** Go `log/slog`
+- **Database:** PostgreSQL (planned)
+- **Database Driver:** pgx (planned)
 
-- Backend: Go
-- Database: PostgreSQL
-- Frontend: React and TypeScript
-- Local environment: Docker Compose
-- Source control and CI: GitHub and GitHub Actions
+### Frontend
+- React (planned)
+- TypeScript (planned)
 
-## Current Status
+### Development & Infrastructure
+- Git and GitHub
+- Docker and Docker Compose (planned)
+- Unit and integration testing
+- REST APIs
 
-Day 1: Repository and project foundation.
+## Current Features
 
-The Go API health endpoint is the next implementation milestone.
+The following backend capabilities have been implemented:
 
-## Payment Safety
+- **Health Check:** Endpoint to verify that the API server is running.
+- **Readiness Check:** Endpoint to indicate whether the application is ready to serve requests.
+- **Environment Configuration:** Server port can be configured through environment variables.
+- **Structured Logging:** JSON-based application logging using Go's `log/slog`.
+- **Graceful Shutdown:** Handles termination signals and allows the HTTP server to shut down gracefully.
+- **Automated Tests:** HTTP endpoint and configuration tests.
 
-This project initially uses simulated payments for learning.
-It does not process real card payments or store real payment card data.
+## API Endpoints
 
-A production EMV integration would require compatible certified
-hardware, a supported payment provider and the applicable security
-and certification requirements.
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/health` | Checks whether the API server is running. |
+| GET | `/ready` | Checks whether the application is ready to serve requests. |
 
+### Example Responses
 
-## Running Locally
+**GET /health**
+
+```json
+{
+  "status": "ok"
+}
+```
+
+**GET /ready**
+
+```json
+{
+  "status": "ready"
+}
+```
+
+## Getting Started
 
 ### Prerequisites
 
 - Go installed
-- Git
+- Git installed
 
-### Start the API
+### Clone the Repository
 
-From the project root, run:
+```bash
+git clone https://github.com/albykennady/edgepos-backend.git
+cd edgepos-backend
+```
+
+### Run the Application
 
 ```bash
 go run ./cmd/api
 ```
 
-The server listens on port 8080.
+By default, the API server starts on port `8080`.
 
-### Health Endpoint
+### Configure the Server Port
 
-Request:
+You can override the default port using the `PORT` environment variable.
 
-```http
-GET http://localhost:8080/health
+```bash
+PORT=9090 go run ./cmd/api
 ```
 
-Expected response:
+The server will then listen on port `9090`.
 
-- Status: `200 OK`
-- Content-Type: `application/json`
-- Body: `{"status":"ok"}`
+## Running Tests
 
-### Run Tests
+Run all tests:
 
 ```bash
 go test ./...
 ```
 
-### Current Implementation
+Run static analysis:
 
-- [x] Go HTTP server
-- [x] chi router
-- [x] Health endpoint
-- [x] Automated health endpoint test
+```bash
+go vet ./...
+```
+
+## Project Structure
+
+```text
+edgepos-backend/
+│
+├── cmd/
+│   └── api/
+│       └── main.go
+│
+├── internal/
+│   ├── config/
+│   │   └── config.go
+│   │
+│   └── httpapi/
+│       ├── router.go
+│       ├── router_test.go
+│       ├── health.go
+│       └── ready.go
+│
+├── go.mod
+├── go.sum
+└── README.md
+```
+
+### Directory Responsibilities
+
+- `cmd/api`: Application entry point and server startup.
+- `internal/config`: Application configuration and environment variable handling.
+- `internal/httpapi`: HTTP router, endpoint handlers, and related tests.
+
+## Development Roadmap
+
+The project will progressively introduce POS functionality.
+
+### Backend
+
+- [x] HTTP server foundation
+- [x] Health and readiness endpoints
+- [x] Environment-based configuration
+- [x] Structured logging
+- [x] Graceful shutdown
+- [ ] PostgreSQL integration
+- [ ] Database migrations
+- [ ] Store and terminal management
+- [ ] Cashier sessions
+- [ ] Product and SKU management
+- [ ] Cart management
+- [ ] Discounts and void operations
+- [ ] Payment simulation
+- [ ] Transaction management
+- [ ] gRPC service design
+
+### Frontend
+
+- [ ] React and TypeScript application
+- [ ] POS operator interface
+- [ ] Product search and scanning simulation
+- [ ] Cart and checkout interface
+- [ ] Payment workflow
+
+### Infrastructure
+
+- [ ] Dockerize the backend
+- [ ] Docker Compose development environment
+- [ ] Integration testing
+- [ ] CI/CD pipeline
+- [ ] Cloud deployment exploration
+
+## Project Goals
+
+The main objective is to build a practical understanding of modern POS architecture and backend engineering.
+
+The project will focus on:
+
+- Writing maintainable and testable Go code.
+- Designing REST APIs and understanding service architecture.
+- Working with relational databases and transactions.
+- Understanding concurrency and reliability in transaction-heavy systems.
+- Learning containerization and deployment workflows.
+- Exploring payment processing concepts and EMV architecture.
+
+**Note:** This is an independent learning project. Payment functionality will initially be simulated; it is not connected to a real payment processor or EMV terminal.
+
+---
+
+**Author:** [Alby Kennady](https://github.com/albykennady)
