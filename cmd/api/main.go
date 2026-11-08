@@ -1,29 +1,74 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"context"
+	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/albykennady/edgepos-backend/internal/config"
 	"github.com/albykennady/edgepos-backend/internal/httpapi"
 )
 
 func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	cfg := config.Load()
-	port := ":" + cfg.Port
 
 	handler := httpapi.NewRouter()
 
 	// TODO 1: Log that EdgePOS is starting on port 8080.
-	address := fmt.Sprintf("%s", port)
-	log.Println("Starting application on port", address)
+	address := ":" + cfg.Port
+	slog.Info("Starting EdgePOS API", "port", cfg.Port)
 
-	// TODO 2: Start the HTTP server on port 8080 using handler.
-
-	// TODO 3: Handle the error returned if the server fails to start.
-	if err := http.ListenAndServe(address, handler); err != nil {
-		log.Fatal("HTTP Server Failed ", err)
+	server := &http.Server{
+		Addr:    address,
+		Handler: handler,
 	}
 
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		syscall.SIGTERM,
+	)
+	defer stop()
+
+	serverErrors := make(chan error, 1)
+
+	go func() {
+		// TODO: Start the HTTP server.
+		if err := server.ListenAndServe(); err != nil {
+			// TODO: Send the returned error into serverErrors.
+			serverErrors <- err
+		}
+	}()
+
+	select {
+	case err := <-serverErrors:
+		slog.Error("HTTP server failed", "error", err)
+
+	case <-ctx.Done():
+		slog.Info("Shutdown signal received")
+
+		// Create a timeout context for graceful draining
+		shutdownCtx, cancel := context.WithTimeout(
+			context.Background(),
+			10*time.Second,
+		)
+		defer cancel()
+
+		if err := server.Shutdown(shutdownCtx); err != nil {
+			slog.Error("Server forced to shutdown:", "error", err)
+
+			if err := server.Close(); err != nil {
+				slog.Error("Server forced to close:", "error", err)
+			}
+		}
+		slog.Info("HTTP server shutdown completed")
+
+	}
 }

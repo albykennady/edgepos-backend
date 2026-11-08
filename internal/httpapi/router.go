@@ -11,5 +11,7 @@ func NewRouter() http.Handler {
 
 	mux.Get("/health", HealthHandler)
 
+	mux.Get("/ready", ReadyHandler)
+
 	return mux
 }
